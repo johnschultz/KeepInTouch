@@ -6,5 +6,7 @@
     <string name="hello_world">Hello world!</string>
     <string name="add_contact">Add</string>
     <string name="title_activity_add_contact">AddContactActivity</string>
+    <string name="title_activity_add_contacts">AddContactsActivity</string>
+    <string name="search_for_a_contact">Search for a Contact</string>
 
 </resources>
