@@ -1,10 +1,10 @@
 package sf.kit;
 
-import sf.kit.R;
-
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.provider.ContactsContract.Contacts;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
@@ -35,8 +35,20 @@ public class MainActivity extends Activity {
     }
     
     public void addContact(){
-    	Intent intent = new Intent(this, AddContactActivity.class);
-    	startActivity(intent);
+    	Intent contactPickerIntent = new Intent(Intent.ACTION_PICK, Contacts.CONTENT_URI);
+    	this.startActivityForResult(contactPickerIntent, CONTACT_PICKER_REQUEST);
     }
+    
+    public void onActivityResult(int requestCode, int resultCode, Intent data){
+    	if(resultCode == RESULT_OK){
+    		switch(requestCode){
+    			case CONTACT_PICKER_REQUEST:
+    				// TODO: handle contact request
+    				break;
+    		}
+    	}
+    }
+    
+    private static final int CONTACT_PICKER_REQUEST = 1;
     
 }
