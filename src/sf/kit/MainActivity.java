@@ -62,7 +62,7 @@ public class MainActivity extends Activity {
     }
     
     public void addContactButtonClicked(){
-    	Intent contactPickerIntent = new Intent(Intent.ACTION_PICK, Contacts.CONTENT_URI);
+    	Intent contactPickerIntent = new Intent(Intent.ACTION_PICK, ContactsContract.Contacts.CONTENT_URI);
     	this.startActivityForResult(contactPickerIntent, CONTACT_PICKER_REQUEST);
     }
     
