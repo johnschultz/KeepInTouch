@@ -32,14 +32,6 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.example.keepintouch.MainActivity" />
         </activity>
-        <activity
-            android:name="sf.kit.AddContactActivity"
-            android:label="@string/title_activity_add_contacts"
-            android:parentActivityName="sf.kit.MainActivity" >
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value="sf.kit.MainActivity" />
-        </activity>
     </application>
 
 </manifest>

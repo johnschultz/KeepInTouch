@@ -1,14 +1,14 @@
 package sf.kit;
 
+import java.io.File;
 import java.util.ArrayList;
 
+import sf.kit.util.Util;
 import android.app.Activity;
 import android.content.Intent;
-import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.ContactsContract;
-import android.provider.ContactsContract.Contacts;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ListView;
@@ -16,34 +16,27 @@ import android.widget.ListView;
 public class MainActivity extends Activity {
 
 	private void addReminder(Uri contactUri){
-		Cursor cursor = getContentResolver().query(
-			ContactsContract.Contacts.CONTENT_URI,
-			PROJECTION,
-			SELECTION,
-			new String[] {contactUri.getLastPathSegment()},
-			null
-		);
-		cursor.moveToFirst();
-		Reminder newReminder = new Reminder(
-			contactUri,
-			cursor.getInt(ID_INDEX),
-			cursor.getString(LOOKUP_KEY_INDEX),
-			cursor.getString(NAME_INDEX)
-		);
-		adapter.add(newReminder);
+		Reminder newReminder = Util.lookUpContactByUri(this, contactUri);
+		remindersListAdapter.add(newReminder);
 	}
 	
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        reminders = new ArrayList<Reminder>();
+        remindersList = new ArrayList<Reminder>();
         remindersListView = (ListView) findViewById(R.id.reminders_list);
-        adapter = new MyArrayAdapter(this, reminders);
-        remindersListView.setAdapter(adapter);
+        remindersListAdapter = new RemindersArrayAdapter(this, remindersList);
+        remindersListView.setAdapter(remindersListAdapter);
+        Util.loadRemindersList(new File(getFilesDir(), Util.REMINDERS_FILE_NAME), remindersListAdapter);
     }
 
-
+    @Override
+    protected void onStop(){
+    	super.onStop();
+    	Util.saveRemindersList(new File(getFilesDir(), Util.REMINDERS_FILE_NAME), remindersList);
+    }
+    
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -56,6 +49,9 @@ public class MainActivity extends Activity {
     	case R.id.add_contact:
     		addContactButtonClicked();
     		return true;
+    	case R.id.clear_reminders:
+    		clearRemindersButtonClicked();
+    		return true;
 		default:
     		return super.onOptionsItemSelected(item);
     	}
@@ -64,6 +60,10 @@ public class MainActivity extends Activity {
     public void addContactButtonClicked(){
     	Intent contactPickerIntent = new Intent(Intent.ACTION_PICK, ContactsContract.Contacts.CONTENT_URI);
     	this.startActivityForResult(contactPickerIntent, CONTACT_PICKER_REQUEST);
+    }
+    
+    public void clearRemindersButtonClicked(){
+    	remindersListAdapter.clear();
     }
     
     public void onActivityResult(int requestCode, int resultCode, Intent data){
@@ -79,19 +79,11 @@ public class MainActivity extends Activity {
     
     private static final int CONTACT_PICKER_REQUEST = 1;
     
-    private ArrayList<Reminder> reminders;
+    private ArrayList<Reminder> remindersList;
     
     private ListView remindersListView;
     
-    private MyArrayAdapter adapter;
+    private RemindersArrayAdapter remindersListAdapter;
     
-    private static final String[] PROJECTION = {
-    	ContactsContract.Contacts._ID,
-    	ContactsContract.Contacts.LOOKUP_KEY, 
-    	ContactsContract.Contacts.DISPLAY_NAME_PRIMARY
-    };
-    
-    private static final String SELECTION = ContactsContract.Contacts._ID + "=?";
-    
-    private static final int ID_INDEX = 0, LOOKUP_KEY_INDEX = 1, NAME_INDEX = 2;
+
 }

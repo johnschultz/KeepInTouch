@@ -8,5 +8,8 @@
     <item android:id="@+id/add_contact"
         android:title="@string/add_contact"
         android:showAsAction="ifRoom" />
+    <item android:id="@+id/clear_reminders" 
+        android:title="@string/clear_reminders_menu_item_text" 
+        android:showAsAction="never" />
 
 </menu>

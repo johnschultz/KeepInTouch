@@ -9,12 +9,12 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
-public class MyArrayAdapter extends ArrayAdapter<Reminder> {
+public class RemindersArrayAdapter extends ArrayAdapter<Reminder> {
 	private final Context context;
 	private final ArrayList<Reminder> values;
 	
 	
-	public MyArrayAdapter(Context context, ArrayList<Reminder> reminders) {
+	public RemindersArrayAdapter(Context context, ArrayList<Reminder> reminders) {
 		super(context, R.layout.reminder_list_view_item, reminders);
 		this.context = context;
 		this.values = reminders;
