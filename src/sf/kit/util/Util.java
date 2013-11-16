@@ -11,8 +11,11 @@ import java.io.StreamCorruptedException;
 import java.util.ArrayList;
 
 import sf.kit.Reminder;
-import sf.kit.RemindersArrayAdapter;
+import sf.kit.ReminderChecker;
+import android.app.AlarmManager;
+import android.app.PendingIntent;
 import android.content.Context;
+import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.provider.ContactsContract;
@@ -20,18 +23,32 @@ import android.provider.ContactsContract;
 
 
 public class Util {
+ 
+	public static void startReminderService(Context context, Intent intent){
+		System.out.println("Setting alarm...");
+		AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
+		Intent alarmIntent = new Intent(context, ReminderChecker.class);
+		PendingIntent alarmPendingIntent = PendingIntent.getBroadcast(context,
+			0,
+			alarmIntent,
+			0
+		);
+		alarmManager.setInexactRepeating(AlarmManager.ELAPSED_REALTIME,
+			AlarmManager.INTERVAL_HOUR,
+			AlarmManager.INTERVAL_HOUR,
+			alarmPendingIntent
+		);
+	}
 	
-	
-    public static void loadRemindersList(File inFile, RemindersArrayAdapter remindersListAdapter){
+    public static void loadRemindersList(File inFile, ArrayList<Reminder> remindersList){
     	try {
 			FileInputStream inStream = new FileInputStream(inFile);
 			ObjectInputStream objIn = new ObjectInputStream(inStream);
 			ArrayList<Reminder> loadedList = (ArrayList<Reminder>) objIn.readObject();
 			if(loadedList != null){
-				remindersListAdapter.clear();
-				remindersListAdapter.addAll(loadedList);
+				remindersList.clear();
+				remindersList.addAll(loadedList);
     		}
-			remindersListAdapter.notifyDataSetChanged();
 			objIn.close();
 			inStream.close();
 		} catch (FileNotFoundException e) {

@@ -28,7 +28,9 @@ public class MainActivity extends Activity {
         remindersListView = (ListView) findViewById(R.id.reminders_list);
         remindersListAdapter = new RemindersArrayAdapter(this, remindersList);
         remindersListView.setAdapter(remindersListAdapter);
-        Util.loadRemindersList(new File(getFilesDir(), Util.REMINDERS_FILE_NAME), remindersListAdapter);
+        Util.loadRemindersList(new File(getFilesDir(), Util.REMINDERS_FILE_NAME), remindersList);
+        remindersListAdapter.notifyDataSetChanged();
+        Util.startReminderService(this, null);
     }
 
     @Override
@@ -51,6 +53,9 @@ public class MainActivity extends Activity {
     		return true;
     	case R.id.clear_reminders:
     		clearRemindersButtonClicked();
+    		return true;
+    	case R.id.display_notification:
+    		Util.startReminderService(this, null);
     		return true;
 		default:
     		return super.onOptionsItemSelected(item);

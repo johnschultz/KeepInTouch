@@ -9,5 +9,6 @@
     <string name="title_activity_add_contacts">AddContactsActivity</string>
     <string name="search_for_a_contact">Search for a Contact</string>
     <string name="clear_reminders_menu_item_text">Clear</string>
+    <string name="display_notification">Notify</string>
 
 </resources>
