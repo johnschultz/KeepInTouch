@@ -11,5 +11,7 @@
     <item android:id="@+id/clear_reminders" 
         android:title="@string/clear_reminders_menu_item_text" 
         android:showAsAction="never" />
-
+	<item android:id="@+id/display_notification"
+	    android:title="@string/display_notification"
+	    android:showAsAction="never" />
 </menu>
