@@ -12,12 +12,20 @@ import android.provider.ContactsContract;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ListView;
+import android.widget.Toast;
 
 public class MainActivity extends Activity {
 
 	private void addReminder(Uri contactUri){
 		Reminder newReminder = Util.lookUpContactByUri(this, contactUri);
-		remindersListAdapter.add(newReminder);
+		Toast toast;
+		if(newReminder != null){
+			remindersListAdapter.add(newReminder);
+			toast = Toast.makeText(this, R.string.contact_added, Toast.LENGTH_SHORT);
+		}
+		else
+			toast = Toast.makeText(this, R.string.no_phone_numbers_for_contact, Toast.LENGTH_LONG);
+		toast.show();
 	}
 	
     @Override
@@ -69,6 +77,7 @@ public class MainActivity extends Activity {
     
     public void clearRemindersButtonClicked(){
     	remindersListAdapter.clear();
+    	Util.saveRemindersList(new File(getFilesDir(), Util.REMINDERS_FILE_NAME), remindersList);
     }
     
     public void onActivityResult(int requestCode, int resultCode, Intent data){

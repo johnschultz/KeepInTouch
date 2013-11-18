@@ -27,7 +27,7 @@ public class RemindersArrayAdapter extends ArrayAdapter<Reminder> {
 		TextView contactNameTextView = (TextView) rowView.findViewById(R.id.contact_item_name);
 		TextView contactReminderTimeTextView = (TextView) rowView.findViewById(R.id.contact_reminder_time);
 		contactNameTextView.setText(values.get(position).getName());
-		contactReminderTimeTextView.setText(Integer.valueOf(values.get(position).getReminderTime()).toString());
+		contactReminderTimeTextView.setText(values.get(position).getPhoneNumber());
 		return rowView;
 	}
 }

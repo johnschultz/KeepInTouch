@@ -9,6 +9,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.StreamCorruptedException;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import sf.kit.Reminder;
 import sf.kit.ReminderChecker;
@@ -83,31 +84,50 @@ public class Util {
     }
     
     public static Reminder lookUpContactByUri(Context context, Uri contactUri){
-		Cursor cursor = context.getContentResolver().query(
-			ContactsContract.Contacts.CONTENT_URI,
-			PROJECTION,
-			SELECTION,
-			new String[] {contactUri.getLastPathSegment()},
+		Cursor contactsCursor = context.getContentResolver().query(contactUri, PROJECTION, null, null, null);
+		contactsCursor.moveToFirst();
+		int id = contactsCursor.getInt(ID_INDEX);
+		String lookupKey = contactsCursor.getString(LOOKUP_KEY_INDEX);
+		String name = contactsCursor.getString(NAME_INDEX);
+		boolean hasPhoneNumber = contactsCursor.getString(HAS_PHONE_NUMBER).equals("1");
+		if(! hasPhoneNumber){
+			// Do something if the contact doesn't have a phone number
+			return null;
+		}
+		Cursor phoneCursor = context.getContentResolver().query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI,
+			PHONE_PROJECTION,
+			ContactsContract.CommonDataKinds.Phone.CONTACT_ID + "="+id,
+			null,
 			null
 		);
-		cursor.moveToFirst();
-		Reminder newReminder = new Reminder(
-			cursor.getInt(ID_INDEX),
-			cursor.getString(LOOKUP_KEY_INDEX),
-			cursor.getString(NAME_INDEX)
-		);
+		HashMap<Integer, String> phoneNumbers = new HashMap<Integer, String>();
+		while(phoneCursor.moveToNext()){
+			String phoneNumber = phoneCursor.getString(PHONE_NUMBER_INDEX);
+			Integer phoneType = phoneCursor.getInt(PHONE_TYPE_INDEX);
+			phoneNumbers.put(phoneType, phoneNumber);
+		}
+		
+		Reminder newReminder = new Reminder(id, lookupKey, name, phoneNumbers);
 		return newReminder;
     }
     
     private static final String[] PROJECTION = {
     	ContactsContract.Contacts._ID,
     	ContactsContract.Contacts.LOOKUP_KEY, 
-    	ContactsContract.Contacts.DISPLAY_NAME_PRIMARY
+    	ContactsContract.Contacts.DISPLAY_NAME_PRIMARY,
+    	ContactsContract.Contacts.HAS_PHONE_NUMBER
     };
     
     private static final String SELECTION = ContactsContract.Contacts._ID + "=?";
     
-    private static final int ID_INDEX = 0, LOOKUP_KEY_INDEX = 1, NAME_INDEX = 2; 
+    private static final int ID_INDEX = 0, LOOKUP_KEY_INDEX = 1, NAME_INDEX = 2, HAS_PHONE_NUMBER = 3; 
+    
+    private static final String[] PHONE_PROJECTION = {
+    	ContactsContract.CommonDataKinds.Phone.NUMBER, 
+    	ContactsContract.CommonDataKinds.Phone.TYPE
+    };
+    
+    private static final int PHONE_NUMBER_INDEX = 0, PHONE_TYPE_INDEX = 1;
     
     public static final String REMINDERS_FILE_NAME = "contacts_to_remind.txt";
 }
